@@ -142,7 +142,7 @@ export default function ContentPanel() {
             <span className="bg-cream text-forest font-bold text-xs px-2 py-1 rounded-full border-2 border-forest">LVL {stage.level}</span>
           </div>
           <div className="flex items-end gap-3 mb-4">
-            <div className="w-16 h-16 bg-cream border-2 border-forest rounded-full flex items-center justify-center shrink-0 hover:rotate-[360deg] transition-transform duration-700 ease-in-out">
+            <div className="w-16 h-16 bg-cream border-2 border-forest rounded-full flex items-center justify-center shrink-0 hover:rotate-[360deg] transition-transform duration-700 ease-in-out" aria-hidden="true">
               <iconify-icon icon={stage.icon} class="text-4xl text-leaf"></iconify-icon>
             </div>
             <h2 className="font-serif text-3xl font-bold leading-none text-forest">
@@ -189,10 +189,10 @@ export default function ContentPanel() {
       </div>
 
       {/* Feature Grid (Maximalist Asymmetry) */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 relative mt-8">
+      <nav aria-label="Feature navigation" className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 relative mt-8">
         
         {/* Main Action Card */}
-        <button onClick={() => handleTabClick('calculator')} className="animate-on-load animate-fade-in-up delay-300 col-span-2 md:col-span-2 bg-terracotta dark:bg-[#3b2820] border-4 border-forest dark:border-terracotta shadow-brutal dark:shadow-none p-8 organic-card-alt text-left group hover:scale-[1.02] hover:-translate-y-2 hover:shadow-brutal-hover active:scale-95 smooth-transition relative overflow-hidden">
+        <button aria-label="Open Carbon Calculator" onClick={() => handleTabClick('calculator')} className="animate-on-load animate-fade-in-up delay-300 col-span-2 md:col-span-2 bg-terracotta dark:bg-[#3b2820] border-4 border-forest dark:border-terracotta shadow-brutal dark:shadow-none p-8 organic-card-alt text-left group hover:scale-[1.02] hover:-translate-y-2 hover:shadow-brutal-hover active:scale-95 smooth-transition relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-cream/20 blob-shape -mr-10 -mt-10 group-hover:scale-[2] group-hover:rotate-45 smooth-transition duration-700"></div>
           <div className="absolute top-4 right-6 bg-transparent border-2 border-cream dark:border-terracotta dark:bg-terracotta text-cream dark:text-[#3b2820] text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full rotate-3 group-hover:animate-bounce-spring">
             Start Here
@@ -282,7 +282,7 @@ export default function ContentPanel() {
           </div>
         </button>
 
-      </div>
+      </nav>
     </>
   );
 }

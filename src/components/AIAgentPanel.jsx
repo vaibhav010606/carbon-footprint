@@ -405,6 +405,7 @@ If the user is NOT describing an activity and the image does not depict an activ
             value={input}
             onChange={e => setInput(e.target.value)}
             disabled={isTyping}
+            maxLength={2000}
             onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -449,10 +450,11 @@ If the user is NOT describing an activity and the image does not depict an activ
             
             <button 
               disabled={isTyping || !input.trim()}
+              aria-label="Send message"
               className="w-10 h-10 bg-forest rounded-xl flex items-center justify-center text-cream hover:bg-leaf hover:-translate-y-1 hover:shadow-brutal-sm active:translate-y-0 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none smooth-transition border-2 border-forest"
               onClick={() => sendMessage(input)}
             >
-              <iconify-icon icon="ph:paper-plane-tilt-fill" class="text-xl"></iconify-icon>
+              <iconify-icon aria-hidden="true" icon="ph:paper-plane-tilt-fill" class="text-xl"></iconify-icon>
             </button>
           </div>
         </div>

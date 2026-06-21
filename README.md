@@ -1,80 +1,195 @@
-# Sprout: Carbon Footprint Tracker
+# 🌱 Sprout — Carbon Footprint Tracker
 
-Sprout is a comprehensive, interactive carbon footprint tracking dashboard designed to empower users to understand, reduce, and offset their environmental impact. Built with a nature-inspired design system, Sprout combines robust tracking tools with engaging gamification and AI-driven insights to make sustainable living accessible and rewarding.
+> *Rooting for a sustainable future, one habit at a time.*
 
-## Comprehensive Technology Stack & Implementation Details
+**Sprout** is an AI-powered carbon footprint tracker that helps individuals measure, understand, and reduce their daily environmental impact. Log activities, chat with an AI eco-agent, grow your virtual garden, and compete in a global leaderboard — all in one premium web experience.
 
-This project leverages a modern, full-stack architecture to deliver a seamless, high-performance, and scalable experience. Below is a detailed breakdown of the technologies used and how they are implemented within the system.
+🌐 **Live App**: [https://carbon-footprint-912406073113.us-central1.run.app](https://carbon-footprint-912406073113.us-central1.run.app)
 
-### 1. Frontend Architecture: React & Vite
-- **Implementation**: The user interface is built as a Single Page Application (SPA) using **React**. We utilized functional components and React Hooks (`useState`, `useEffect`, `useContext`) to manage complex, modular state across different panels (e.g., Calculator, Eco-Garden, and Analytics).
-- **Build Tool**: **Vite** is used as the frontend build tool, providing a significantly faster Hot Module Replacement (HMR) during development compared to traditional bundlers like Webpack, and outputting highly optimized, minified static assets for production.
-- **Routing & State Management**: The application implements localized and global state to ensure a smooth, app-like experience without full-page reloads, making transitions between the map, challenges, and dashboard instantaneous and highly responsive.
+---
 
-### 2. Backend & State Persistence: Firebase
-Firebase acts as the backend-as-a-service (BaaS), handling all server-side operations securely.
-- **Firebase Authentication**: Handles secure user onboarding, login, and session management. It ensures that user data is kept private and securely linked to unique IDs.
-- **Cloud Firestore**: A NoSQL, real-time database used for persisting application state.
-  - **Implementation**: Firestore collections store user profiles, calculated carbon footprints, completed challenges, and the state of the "Eco-Garden" gamification system. When a user completes a task or updates their footprint, the data is synced in real-time between the React frontend and Firestore, guaranteeing that data is safely preserved across sessions.
+## ✨ Features
 
-### 3. AI Agent Integration: LangChain & LangGraph
-One of the core innovations of Sprout is the integrated, intelligent AI sustainability assistant.
-- **Implementation**: The AI system is orchestrated using **LangChain** and **LangGraph**. This allows the AI to execute stateful, multi-step reasoning processes rather than simple one-off responses.
-- **Context-Aware Assistance**: Instead of a generic chat interface, the LangGraph-powered agent is deeply integrated with the user's actual dashboard data. It understands the user's specific carbon footprint metrics, recent challenge completions, and overall progress. This allows the agent to provide highly tailored, contextual advice on how to reduce emissions and optimize daily habits.
+### 🤖 AI Eco-Agent (Gemini 2.5 Flash + LangGraph)
+- Conversational activity logging — just describe what you did
+- Multimodal: upload **receipts**, scan **barcodes**, or **share your screen** for AI analysis
+- Automatic carbon footprint extraction and Firestore logging
+- Context-aware: knows your history and provides personalized advice
+- Powered by a **LangGraph** state machine for extensible agentic workflows
 
-### 4. UI/UX & Styling: Vanilla CSS & "Stitch" Design System
-- **Implementation**: We implemented a bespoke, nature-inspired design system entirely from scratch using **Vanilla CSS**. This completely bypasses heavy CSS frameworks, ensuring a lightweight and incredibly fast-loading UI.
-- **Design Philosophy**: The application embraces modern UI trends including soft glassmorphism, dynamic micro-animations on hover states, and smooth progress bar transitions. The color palette utilizes sophisticated, earthy tones with distinct color-coded indicators for warnings, successes, and gamified rewards. This unified aesthetic ensures an immersive, premium, and professional user experience.
+### 🧮 Manual Carbon Calculator
+- Log **7 categories**: Transport, Energy, Food, Shopping, Digital, Waste, Positive Actions
+- 30+ sub-categories with scientifically-sourced emission factors (IPCC, EPA)
+- Live CO₂ preview as you type
+- Quick-log presets for common activities
+- Streak and weekly progress tracking
 
-## Features
+### 📊 Analytics Dashboard
+- Interactive bar charts of emissions over time (Recharts)
+- Monthly CO₂ budget tracking with visual progress bar
+- Category breakdown and personalized reduction tips
 
-- **Carbon Calculator**: Accurately estimate your carbon footprint based on daily activities, transportation, energy usage, and dietary choices.
-- **AI Agent Integration**: A unified AI Agent panel provides personalized sustainability recommendations, answers eco-related queries, and guides users through their carbon reduction journey.
-- **Green Map**: Discover nearby eco-friendly businesses, recycling centers, and green spaces.
-- **Challenges & Rewards**: Participate in daily and weekly sustainability challenges to earn rewards and build green habits.
-- **Eco-Garden (Gamification)**: Visualize your progress! Watch your virtual eco-garden grow and flourish as you reduce your carbon emissions and complete challenges.
-- **Learning Hub**: Access curated content, articles, and tips to deepen your understanding of environmental conservation and sustainable practices.
-- **Community & Analytics**: Track your progress over time with detailed analytics and connect with a community of like-minded individuals.
+### 🌳 Virtual Eco-Garden
+- 4 growth stages based on Leaf Points earned
+- Progress bar to next stage with point requirements
+- Visual feedback reinforcing positive environmental habits
 
-## Installation and Setup
+### 🏆 Community & Leaderboard
+- Real-time global leaderboard of top eco-warriors
+- User levels, leaf points, and active day streaks
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/vaibhav010606/carbon-footprint.git
-   cd carbon-footprint
-   ```
+### 🎮 Eco Quest Game
+- Interactive browser game to raise carbon awareness
+- Points earned in-game contribute to Leaf Points
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### 🗺️ Green Map
+- Leaflet-powered interactive map
+- Find nearby EV charging stations, recycling centers, parks, and eco-spots
 
-3. **Environment Variables:**
-   Create a `.env` file in the root directory and add your Firebase and AI API keys:
-   ```env
-   VITE_FIREBASE_API_KEY=your_firebase_api_key
-   VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-   VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
-   VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-   VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-   VITE_FIREBASE_APP_ID=your_firebase_app_id
-   VITE_AI_API_KEY=your_ai_api_key
-   ```
+### 📚 Learning Hub (The Field Guide)
+- Curated videos and articles on carbon footprints, greenhouse gases, and sustainability
+- Category filtering: Carbon Basics, Global Warming, Renewable Energy, and more
 
-4. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+### 💡 Personalized Eco-Tips
+- Recommendations generated from your actual logged activity patterns
+- Identifies your highest-impact categories and suggests targeted changes
 
-5. **Build for production:**
-   ```bash
-   npm run build
-   ```
+### 🎯 Challenges & Badges
+- Activity-based badge system (First Step, Eco Warrior, Planet Saver, etc.)
+- Meatless Week challenge with live progress tracking
 
-## Contributing
+---
 
-Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
+## 🏗️ Architecture
 
-## License
+```
+src/
+├── agent/
+│   └── graph.js          # LangGraph state machine (Gemini 2.5 Flash)
+├── components/
+│   ├── AIAgentPanel.jsx  # Multimodal AI chat interface
+│   ├── Analytics.jsx     # CO2 charts and budget tracking
+│   ├── AuthModal.jsx     # Google + Email/Password auth
+│   ├── Calculator.jsx    # Manual emission calculator
+│   ├── Challenges.jsx    # Badges and active challenges
+│   ├── Community.jsx     # Global leaderboard
+│   ├── ContentPanel.jsx  # Main routing/nav hub
+│   ├── EcoGarden.jsx     # Virtual plant growth
+│   ├── Game.jsx          # Eco Quest game
+│   ├── GreenMap.jsx      # Leaflet interactive map
+│   ├── LearningHub.jsx   # Educational content hub
+│   └── Recommendations.jsx # Personalized eco-tips
+├── firebase.js           # Firebase app initialization
+├── audio.js              # UI sound effects
+└── index.css             # Global styles and animations
+```
 
-This project is licensed under the MIT License.
+### Key Technology Decisions
+
+| Layer | Technology | Reason |
+|---|---|---|
+| Frontend | React 19 + Vite | Fast HMR, modern React features |
+| AI Agent | Gemini 2.5 Flash + LangGraph | State graph enables extensible tool-calling |
+| Database | Firebase Firestore | Real-time sync, offline support |
+| Auth | Firebase Auth | Google + email, secure token management |
+| Maps | React Leaflet | Open-source, no API key required |
+| Charts | Recharts | Declarative, responsive chart components |
+| Styling | Tailwind CSS (CDN) | Rapid utility-first styling with custom theme |
+
+---
+
+## 🔐 Security
+
+- Firebase API keys scoped to authorized domains only
+- Firestore Security Rules restrict all reads/writes to authenticated users' own data
+- Input sanitization: all user-generated text is trimmed and length-capped before Firestore writes
+- `minLength` and `maxLength` enforced on all form inputs
+- Gemini API keys stored in `.env.local` (never committed to version control)
+- Environment variable rotation supported via comma-separated key list with round-robin selection
+
+---
+
+## ♿ Accessibility
+
+- Semantic HTML5 landmarks: `<header>`, `<main>`, `<nav>`, `<footer>`
+- Skip-to-content link for keyboard users
+- All interactive elements have explicit `aria-label` or visible label associations (`htmlFor`/`id`)
+- Error messages use `role="alert"` and `aria-live="polite"` for screen reader announcements
+- `autocomplete` attributes on all auth form inputs
+- Decorative icons marked `aria-hidden="true"`
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm test -- --coverage
+```
+
+- **14 test suites**, **30+ tests** covering all components
+- Pure unit tests for emission calculation logic (no mocking required)
+- Integration tests for form interactions, tab switching, user input
+- Mocked Firebase and LangChain for isolated component testing
+
+---
+
+## 🚀 Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.local.example .env.local
+# Add your Firebase and Gemini API keys
+
+# Start dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Required Environment Variables
+
+```env
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_GEMINI_API_KEYS=key1,key2  # comma-separated for round-robin rotation
+```
+
+---
+
+## ☁️ Deployment
+
+Deployed on **Google Cloud Run** with container-based serving:
+
+```bash
+# Build and deploy
+gcloud run deploy carbon-footprint \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated
+```
+
+---
+
+## 🌍 Emission Factors
+
+Emission factors are sourced from peer-reviewed datasets:
+- **Transport**: IPCC AR5 / UK DEFRA 2023 emission factors
+- **Food**: Poore & Nemecek (2018), Science — "Reducing food's environmental impacts"
+- **Energy**: US EPA eGRID 2022 (0.39 kg CO₂e/kWh for grid electricity)
+- **Digital**: The Shift Project, Carbon Trust estimates
+
+---
+
+*Built with 💚 for a greener planet.*

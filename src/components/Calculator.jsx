@@ -234,7 +234,7 @@ export default function Calculator() {
         userId: auth.currentUser.uid,
         activityType: activityType,
         subCategory: subCategory,
-        notes: notes,
+        notes: notes.trim().slice(0, 200),
         rawAmount: Number(amount),
         rawUnit: unit,
         amount: parseFloat(calculatedCO2.toFixed(2)),
@@ -484,6 +484,8 @@ export default function Calculator() {
                 placeholder="e.g. Morning commute to the office"
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
+                maxLength={200}
+                autoComplete="off"
               />
             </div>
             

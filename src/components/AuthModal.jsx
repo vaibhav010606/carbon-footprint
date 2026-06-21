@@ -57,7 +57,12 @@ export default function AuthModal({ onAuthSuccess }) {
         </div>
 
         {error && (
-          <div className="bg-terracotta/20 border-2 border-terracotta text-terracotta p-3 rounded-lg text-sm font-bold mb-4">
+          <div
+            id="auth-error"
+            role="alert"
+            aria-live="polite"
+            className="bg-terracotta/20 border-2 border-terracotta text-terracotta p-3 rounded-lg text-sm font-bold mb-4"
+          >
             {error}
           </div>
         )}
@@ -85,6 +90,8 @@ export default function AuthModal({ onAuthSuccess }) {
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              aria-describedby={error ? 'auth-error' : undefined}
               className="w-full bg-white border-4 border-forest rounded-xl p-3 text-forest font-medium focus:outline-none shadow-inner"
               placeholder="you@example.com"
               required
@@ -97,6 +104,8 @@ export default function AuthModal({ onAuthSuccess }) {
               type="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete={isLogin ? 'current-password' : 'new-password'}
+              minLength={6}
               className="w-full bg-white border-4 border-forest rounded-xl p-3 text-forest font-medium focus:outline-none shadow-inner"
               placeholder="••••••••"
               required

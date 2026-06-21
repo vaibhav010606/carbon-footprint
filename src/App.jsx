@@ -97,10 +97,11 @@ function App() {
               {/* OLED Toggle Button */}
               <button 
                 onClick={toggleOledMode}
+                aria-label={oledMode ? 'Disable OLED Power Saver Mode' : 'Enable OLED Power Saver Mode'}
                 className={`border-2 rounded-full p-2 smooth-transition shadow-brutal-sm hover:-translate-y-1 active:translate-y-0 ${oledMode ? 'bg-[#39FF14] text-black border-[#39FF14]' : 'bg-cream text-forest border-forest hover:bg-ochre'}`}
                 title="Toggle OLED Power Saver Mode"
               >
-                <iconify-icon icon={oledMode ? "ph:moon-stars-fill" : "ph:sun-dim-fill"} class="text-xl"></iconify-icon>
+                <iconify-icon aria-hidden="true" icon={oledMode ? "ph:moon-stars-fill" : "ph:sun-dim-fill"} class="text-xl"></iconify-icon>
               </button>
 
               <button 
@@ -116,7 +117,7 @@ function App() {
         </header>
 
         {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 flex-1 relative" style={{ opacity: user ? 1 : 0.3, pointerEvents: user ? 'auto' : 'none' }}>
+        <main id="main-content" className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 flex-1 relative" style={{ opacity: user ? 1 : 0.3, pointerEvents: user ? 'auto' : 'none' }}>
           
           {/* Left/Main Column */}
           <div className="lg:col-span-7 flex flex-col gap-10">
@@ -128,12 +129,12 @@ function App() {
             <AIAgentPanel />
           </div>
 
-        </div>
+        </main>
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t-2 border-forest/10 flex flex-col md:flex-row justify-between items-center gap-6 animate-on-load animate-fade-in-up delay-800 pb-10">
           <div className="flex items-center gap-2 text-forest hover:scale-105 smooth-transition cursor-default">
-            <iconify-icon icon="ph:plant-fill" class="text-2xl animate-pulse"></iconify-icon>
+            <iconify-icon aria-hidden="true" icon="ph:plant-fill" class="text-2xl animate-pulse"></iconify-icon>
             <span className="font-serif font-bold text-xl">Sprout.</span>
           </div>
           <div className="text-center md:text-left">
