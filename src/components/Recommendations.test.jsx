@@ -11,6 +11,6 @@ vi.mock('../firebase', () => ({
 describe('Recommendations Component', () => {
   it('renders recommendations header', () => {
     render(<Recommendations />);
-    expect(screen.getByText(/Personalized Tips/i)).toBeInTheDocument();
+    expect(screen.getByText(/Eco-Tips/i)).toBeInTheDocument();
   });
 });

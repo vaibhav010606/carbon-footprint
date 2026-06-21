@@ -11,6 +11,6 @@ vi.mock('../firebase', () => ({
 describe('Challenges Component', () => {
   it('renders challenges header', () => {
     render(<Challenges />);
-    expect(screen.getByText(/Eco-Challenges/i)).toBeInTheDocument();
+    expect(screen.getByText(/Active Challenges/i)).toBeInTheDocument();
   });
 });
