@@ -38,7 +38,11 @@ export default function AuthModal({ onAuthSuccess }) {
       if (onAuthSuccess) onAuthSuccess(result.user);
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid email or password. If you don\\'t have an account, please click Sign Up below.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
