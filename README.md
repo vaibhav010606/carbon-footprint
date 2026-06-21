@@ -1,48 +1,63 @@
-# Sprout: Smart Carbon Footprint Assistant 🌱
+# Sprout: Carbon Footprint Tracker
 
-Sprout is an intelligent, eco-friendly lifestyle companion built to track, gamify, and reduce your carbon footprint. It seamlessly blends manual tracking with an advanced AI Agent capable of visually scanning receipts and barcodes to automatically deduce emissions.
+Sprout is a comprehensive, interactive carbon footprint tracking dashboard designed to empower users to understand, reduce, and offset their environmental impact. Built with a nature-inspired design system, Sprout combines robust tracking tools with engaging gamification and AI-driven insights to make sustainable living accessible and rewarding.
 
-## 🏆 Challenge Vertical
-**Smart Carbon Footprint Assistant / Eco-friendly Tracker**
+## Features
 
-## 🧠 Approach & Logic
-Our approach hinges on removing the friction from environmental tracking while maintaining scientific accuracy and user engagement. 
+- **Carbon Calculator**: Accurately estimate your carbon footprint based on daily activities, transportation, energy usage, and dietary choices.
+- **AI Agent Integration**: A unified AI Agent panel provides personalized sustainability recommendations, answers eco-related queries, and guides users through their carbon reduction journey.
+- **Green Map**: Discover nearby eco-friendly businesses, recycling centers, and green spaces.
+- **Challenges & Rewards**: Participate in daily and weekly sustainability challenges to earn rewards and build green habits.
+- **Eco-Garden (Gamification)**: Visualize your progress! Watch your virtual eco-garden grow and flourish as you reduce your carbon emissions and complete challenges.
+- **Learning Hub**: Access curated content, articles, and tips to deepen your understanding of environmental conservation and sustainable practices.
+- **Community & Analytics**: Track your progress over time with detailed analytics and connect with a community of like-minded individuals.
 
-- **AI-Powered Input:** Instead of manually searching for emission factors, the built-in AI Agent (powered by LangChain and Google Gemini 1.5) uses a ReAct pattern to chat with users, interpret unstructured text (e.g., "I flew to New York"), scan physical receipts, and parse barcodes. It autonomously classifies these activities and calculates accurate CO₂ equivalents.
-- **Real-Time Data Pipeline:** We use Firebase Firestore as our backend. The app utilizes real-time `onSnapshot` listeners so that any activity logged via the AI Agent immediately updates the global dashboard, the gamified Eco-Garden, the monthly budget in Analytics, and the community leaderboard.
-- **Extensible Gamification Engine:** User behavior is mapped to "Leaf Points". The logic dynamically awards achievement badges based on specific user actions (e.g., logging vegetarian meals unlocks a "Meatless Week" progress bar, while consistent daily logging builds a streak).
+## Tech Stack
 
-## ⚙️ How the Solution Works
-1. **The Core Dashboard:** Users are greeted with an OLED-friendly (Dark Mode) UI built using React and TailwindCSS. The `ContentPanel` acts as the router, swapping between the Calculator, Map, Analytics, and Learning Hub.
-2. **Manual & AI Logging:** Users can manually log activities via the `Calculator` (using predefined emission factors for transport, food, energy, etc.), or they can open the floating `AIAgentPanel`. The agent can accept text, image uploads (receipts), or webcam captures (barcodes), run them through the Gemini Vision model, and automatically write structured data to Firestore.
-3. **Analytics & Budgeting:** The `Analytics` component aggregates real-time data, comparing it against a user-defined monthly CO₂ budget (default 500kg), visualizing trends via Recharts.
-4. **Community & Map:** Users can see global rankings on the Leaderboard. The `GreenMap` uses the Overpass API to dynamically fetch and display nearby eco-friendly spots (parks, EV chargers, recycling centers, thrift stores) based on the user's geolocation.
+- **Frontend**: React, Vite, Vanilla CSS
+- **Backend/Services**: Firebase (Authentication, Firestore)
+- **AI Integration**: LangChain / LangGraph
+- **Styling**: Custom CSS with a polished, nature-inspired "Stitch" design system, prioritizing accessibility and modern aesthetics.
 
-## 🔒 Security (Firebase Setup)
-While the frontend accesses Firebase using keys stored securely in `.env.local` (safe for Vite apps), a production deployment of Sprout requires configuring Firestore Security Rules to ensure data integrity:
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    match /activities/{activityId} {
-      // Users can only read/write their own activities
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-    }
-  }
-}
-```
+## Installation and Setup
 
-## 🤔 Assumptions Made
-- **Emission Factors:** The predefined emission factors (e.g., 0.19 kg CO₂/km for petrol cars, 2.5 kg CO₂ for a beef meal) are broad global averages intended for gamification, not enterprise carbon accounting.
-- **Hardware Availability:** The barcode scanner and screen-share tools assume the user's browser has access to a webcam (`getUserMedia`) and screen capture (`getDisplayMedia`) APIs.
-- **Environment Context:** We assume the Overpass API is available for the GreenMap feature; if the user's network blocks it, the map gracefully degrades to a generic view.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/vaibhav010606/carbon-footprint.git
+   cd carbon-footprint
+   ```
 
-## 🚀 Running Locally
-1. Clone the repository.
-2. Run `npm install`.
-3. Create a `.env.local` with your `VITE_FIREBASE_*` and `VITE_GEMINI_API_KEYS`.
-4. Run `npm run dev`.
-5. Run `npm run test` to execute the Vitest suite.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Variables:**
+   Create a `.env` file in the root directory and add your Firebase and AI API keys:
+   ```env
+   VITE_FIREBASE_API_KEY=your_firebase_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+   VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+   VITE_FIREBASE_APP_ID=your_firebase_app_id
+   VITE_AI_API_KEY=your_ai_api_key
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
+
+## License
+
+This project is licensed under the MIT License.
