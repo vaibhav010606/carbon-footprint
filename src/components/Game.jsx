@@ -6,7 +6,7 @@ export default function Game() {
 
       <div className="bg-cream border-4 border-forest shadow-brutal rounded-[2rem] text-center relative overflow-hidden" style={{ height: '75vh', minHeight: '600px' }}>
         <iframe 
-          src="/eco-quest.html" 
+          src="/eco-quest.html?v=2" 
           title="Eco Quest Game" 
           className="absolute inset-0 w-full h-full border-0"
           style={{ width: '100%', height: '100%', border: 'none' }}
