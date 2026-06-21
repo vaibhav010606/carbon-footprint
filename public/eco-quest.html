@@ -567,7 +567,12 @@ body {
     </div>
   </div>
 
-  <canvas id="gameCanvas"></canvas>
+  <canvas id="gameCanvas" aria-label="Eco Quest Game Canvas" role="img">
+    <p>Your browser does not support the HTML5 canvas tag.</p>
+    <div className="visually-hidden" style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;">
+      Eco Quest: Save the Planet. An interactive platformer game where you play as an Eco-Hero to restore nature. Collect eco-friendly items like salads and broccoli, while avoiding high-carbon items like burgers and flights.
+    </div>
+  </canvas>
   <script>
 // ═══════════════════════════════════════════
 //  ECO QUEST – GAME ENGINE (game.js)
