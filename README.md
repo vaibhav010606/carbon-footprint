@@ -24,11 +24,6 @@
 - Quick-log presets for common activities
 - Streak and weekly progress tracking
 
-### 📊 Analytics Dashboard
-- Interactive bar charts of emissions over time (Recharts)
-- Monthly CO₂ budget tracking with visual progress bar
-- Category breakdown and personalized reduction tips
-
 ### 🌳 Virtual Eco-Garden
 - 4 growth stages based on Leaf Points earned
 - Progress bar to next stage with point requirements
@@ -68,7 +63,6 @@ src/
 │   └── graph.js          # LangGraph state machine (Gemini 2.5 Flash)
 ├── components/
 │   ├── AIAgentPanel.jsx  # Multimodal AI chat interface
-│   ├── Analytics.jsx     # CO2 charts and budget tracking
 │   ├── AuthModal.jsx     # Google + Email/Password auth
 │   ├── Calculator.jsx    # Manual emission calculator
 │   ├── Challenges.jsx    # Badges and active challenges
@@ -101,7 +95,7 @@ src/
 ## 🔐 Security
 
 - Firebase API keys scoped to authorized domains only
-- Firestore Security Rules restrict all reads/writes to authenticated users' own data
+- **Infrastructure as Code:** `firestore.rules` enforces rule that restricts all reads/writes to authenticated users' own data (`request.auth.uid == userId`)
 - Input sanitization: all user-generated text is trimmed and length-capped before Firestore writes
 - `minLength` and `maxLength` enforced on all form inputs
 - Gemini API keys stored in `.env.local` (never committed to version control)
@@ -117,6 +111,7 @@ src/
 - Error messages use `role="alert"` and `aria-live="polite"` for screen reader announcements
 - `autocomplete` attributes on all auth form inputs
 - Decorative icons marked `aria-hidden="true"`
+- **Canvas A11y:** The HTML5 Canvas (`eco-quest.html`) includes `aria-label`, `role="img"`, and a visually hidden text fallback (`<div className="visually-hidden">`) describing game mechanics for screen readers.
 
 ---
 
@@ -131,6 +126,8 @@ npm test -- --coverage
 ```
 
 - **14 test suites**, **30+ tests** covering all components
+- **Strict 80% Threshold:** `vitest.config.js` enforces a strict 80% coverage floor for statements, branches, functions, and lines.
+- `coverage.test.jsx` ensures all modular UI components (like `ChatBubble.jsx`) are structurally mounted.
 - Pure unit tests for emission calculation logic (no mocking required)
 - Integration tests for form interactions, tab switching, user input
 - Mocked Firebase and LangChain for isolated component testing
