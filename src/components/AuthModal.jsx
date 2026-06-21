@@ -79,8 +79,9 @@ export default function AuthModal({ onAuthSuccess }) {
 
         <form onSubmit={handleEmailAuth} className="space-y-4">
           <div>
-            <label className="block text-forest font-bold mb-1 uppercase tracking-wider text-xs">Email</label>
+            <label htmlFor="emailInput" className="block text-forest font-bold mb-1 uppercase tracking-wider text-xs">Email</label>
             <input 
+              id="emailInput"
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -90,8 +91,9 @@ export default function AuthModal({ onAuthSuccess }) {
             />
           </div>
           <div>
-            <label className="block text-forest font-bold mb-1 uppercase tracking-wider text-xs">Password</label>
+            <label htmlFor="passwordInput" className="block text-forest font-bold mb-1 uppercase tracking-wider text-xs">Password</label>
             <input 
+              id="passwordInput"
               type="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}

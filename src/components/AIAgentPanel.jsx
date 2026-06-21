@@ -399,6 +399,7 @@ If the user is NOT describing an activity and the image does not depict an activ
         
         <div className="flex flex-col bg-cream dark:bg-[#15170F] border-2 border-forest dark:border-white/10 rounded-2xl p-2 shadow-inner">
           <textarea 
+            aria-label="Message Input"
             className="w-full bg-transparent border-none resize-none h-12 px-3 py-2 text-forest dark:text-[#EDE8DA] font-medium placeholder-forest/50 dark:placeholder-white/30 focus:outline-none text-sm"
             placeholder="Log an activity, ask a question..."
             value={input}

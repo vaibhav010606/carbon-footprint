@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import AIAgentPanel from './components/AIAgentPanel';
-import ContentPanel from './components/ContentPanel';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+const AIAgentPanel = lazy(() => import('./components/AIAgentPanel'));
+const ContentPanel = lazy(() => import('./components/ContentPanel'));
 import AuthModal from './components/AuthModal';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -120,12 +120,16 @@ function App() {
           
           {/* Left/Main Column */}
           <div className="lg:col-span-7 flex flex-col gap-10">
-            <ContentPanel />
+            <Suspense fallback={<div className="text-forest p-4 text-center">Loading content...</div>}>
+              <ContentPanel />
+            </Suspense>
           </div>
 
           {/* Right Column: AI Agent */}
           <div className="lg:col-span-5 h-[850px] lg:mt-0 mt-12 animate-on-load animate-fade-in-up delay-400">
-            <AIAgentPanel />
+            <Suspense fallback={<div className="text-forest p-4 text-center">Loading Sprout Agent...</div>}>
+              <AIAgentPanel />
+            </Suspense>
           </div>
 
         </div>
@@ -145,15 +149,15 @@ function App() {
             </p>
           </div>
           <div className="flex gap-4">
-            <a href="javascript:void(0)" className="bg-cream border-2 border-forest rounded-full p-2.5 hover:bg-forest hover:text-cream hover:-translate-y-1 smooth-transition shadow-brutal-sm cursor-not-allowed opacity-50" title="Coming soon">
+            <button type="button" aria-label="Twitter" className="bg-cream border-2 border-forest rounded-full p-2.5 hover:bg-forest hover:text-cream hover:-translate-y-1 smooth-transition shadow-brutal-sm cursor-not-allowed opacity-50" title="Coming soon">
               <iconify-icon icon="ph:twitter-logo-fill" class="text-xl block"></iconify-icon>
-            </a>
-            <a href="javascript:void(0)" className="bg-cream border-2 border-forest rounded-full p-2.5 hover:bg-forest hover:text-cream hover:-translate-y-1 smooth-transition shadow-brutal-sm cursor-not-allowed opacity-50" title="Coming soon">
+            </button>
+            <button type="button" aria-label="Instagram" className="bg-cream border-2 border-forest rounded-full p-2.5 hover:bg-forest hover:text-cream hover:-translate-y-1 smooth-transition shadow-brutal-sm cursor-not-allowed opacity-50" title="Coming soon">
               <iconify-icon icon="ph:instagram-logo-fill" class="text-xl block"></iconify-icon>
-            </a>
-            <a href="javascript:void(0)" className="bg-cream border-2 border-forest rounded-full p-2.5 hover:bg-forest hover:text-cream hover:-translate-y-1 smooth-transition shadow-brutal-sm cursor-not-allowed opacity-50" title="Coming soon">
+            </button>
+            <button type="button" aria-label="LinkedIn" className="bg-cream border-2 border-forest rounded-full p-2.5 hover:bg-forest hover:text-cream hover:-translate-y-1 smooth-transition shadow-brutal-sm cursor-not-allowed opacity-50" title="Coming soon">
               <iconify-icon icon="ph:linkedin-logo-fill" class="text-xl block"></iconify-icon>
-            </a>
+            </button>
           </div>
         </footer>
 

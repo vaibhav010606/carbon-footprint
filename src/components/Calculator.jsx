@@ -392,8 +392,9 @@ export default function Calculator() {
           <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Category</label>
+                <label htmlFor="category" className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Category</label>
                 <select 
+                  id="category"
                   className="w-full bg-white border-4 border-forest rounded-xl p-4 text-forest font-medium focus:outline-none focus:ring-0 shadow-inner"
                   value={activityType} 
                   onChange={handleCategoryChange}
@@ -408,8 +409,9 @@ export default function Calculator() {
 
               {activityType && (
                 <div className="animate-fade-in-up">
-                  <label className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Sub-category</label>
+                  <label htmlFor="subCategory" className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Sub-category</label>
                   <select 
+                    id="subCategory"
                     className="w-full bg-white border-4 border-forest rounded-xl p-4 text-forest font-medium focus:outline-none focus:ring-0 shadow-inner"
                     value={subCategory} 
                     onChange={handleSubCategoryChange}
@@ -440,8 +442,9 @@ export default function Calculator() {
               </div>
               
               <div className="flex-1 w-full md:w-1/3">
-                <label className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Unit</label>
+                <label htmlFor="unit" className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Unit</label>
                 <select 
+                  id="unit"
                   className="w-full bg-white border-4 border-forest rounded-xl p-4 text-forest font-medium focus:outline-none shadow-inner"
                   value={unit}
                   onChange={e => setUnit(e.target.value)}
@@ -460,8 +463,9 @@ export default function Calculator() {
               </div>
 
               <div className="flex-1 w-full md:w-1/3">
-                <label className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Date</label>
+                <label htmlFor="date" className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Date</label>
                 <input 
+                  id="date"
                   type="date" 
                   className="w-full bg-white border-4 border-forest rounded-xl p-4 text-forest font-medium focus:outline-none shadow-inner"
                   value={date}
@@ -472,8 +476,9 @@ export default function Calculator() {
             </div>
 
             <div>
-              <label className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Notes (Optional)</label>
+              <label htmlFor="notes" className="block text-forest font-bold mb-2 uppercase tracking-wider text-sm">Notes (Optional)</label>
               <input 
+                id="notes"
                 type="text" 
                 className="w-full bg-white border-4 border-forest rounded-xl p-4 text-forest font-medium focus:outline-none shadow-inner"
                 placeholder="e.g. Morning commute to the office"
@@ -546,7 +551,7 @@ export default function Calculator() {
                   <div className={`font-serif font-bold text-xl shrink-0 ${item.amount < 0 ? 'text-leaf' : 'text-forest'}`}>
                     {item.amount > 0 ? '+' : ''}{item.amount.toFixed(1)} kg
                   </div>
-                  <button onClick={() => handleDelete(item.id)} className="w-8 h-8 rounded-full border-2 border-transparent text-soil hover:bg-terracotta hover:border-forest hover:text-cream flex items-center justify-center smooth-transition opacity-50 group-hover:opacity-100">
+                  <button aria-label="Delete activity" onClick={() => handleDelete(item.id)} className="w-8 h-8 rounded-full border-2 border-transparent text-soil hover:bg-terracotta hover:border-forest hover:text-cream flex items-center justify-center smooth-transition opacity-50 group-hover:opacity-100">
                     <iconify-icon icon="ph:trash-bold"></iconify-icon>
                   </button>
                 </div>
