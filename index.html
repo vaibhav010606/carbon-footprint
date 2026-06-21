@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sprout - Ecological Awareness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://api.fontshare.com/v2/css?f[]=boska@200,300,400,500,700,900&f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: ['class', '.oled-mode'],
+        theme: {
+          extend: {
+            colors: {
+              cream: 'var(--color-cream)',
+              forest: 'var(--color-forest)',
+              leaf: 'var(--color-leaf)',
+              leafMuted: 'var(--color-leaf-muted)',
+              terracotta: 'var(--color-terracotta)',
+              ochre: 'var(--color-ochre)',
+              soil: 'var(--color-soil)',
+              mud: 'var(--color-mud)',
+              cardBg: 'var(--color-card-bg)'
+            },
+            fontFamily: {
+              serif: ['Boska', 'serif'],
+              sans: ['Satoshi', 'sans-serif'],
+            },
+            boxShadow: {
+              'brutal': '8px 8px 0px 0px var(--color-forest)',
+              'brutal-hover': '12px 12px 0px 0px var(--color-forest)',
+              'brutal-sm': '4px 4px 0px 0px var(--color-forest)',
+              'brutal-sm-hover': '6px 6px 0px 0px var(--color-forest)',
+              'glow': '0 0 15px var(--color-ochre)',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              spinSlow: {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg)' },
+              },
+              spinSlowReverse: {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(-360deg)' },
+              },
+              bounceSpring: {
+                '0%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+                '100%': { transform: 'scale(1)' },
+              }
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'spin-slow': 'spinSlow 30s linear infinite',
+              'spin-slow-reverse': 'spinSlowReverse 40s linear infinite',
+              'bounce-spring': 'bounceSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="text-forest font-sans antialiased noise-bg min-h-screen relative flex flex-col items-center justify-start overflow-x-hidden">
+    <div id="root" class="w-full flex-1 flex flex-col items-center justify-start relative"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
