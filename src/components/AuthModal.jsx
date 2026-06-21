@@ -124,6 +124,7 @@ export default function AuthModal({ onAuthSuccess }) {
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <button 
             type="button" 
+            aria-label={isLogin ? 'Sign up' : 'Log in'}
             onClick={() => setIsLogin(!isLogin)}
             className="text-forest font-bold underline hover:text-leaf smooth-transition"
           >

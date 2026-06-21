@@ -292,7 +292,7 @@ If the user is NOT describing an activity and the image does not depict an activ
             <iconify-icon icon="ph:warning-circle-fill" class="text-cream text-base shrink-0"></iconify-icon>
             <p className="text-cream text-[10px] font-bold truncate">{apiError}</p>
           </div>
-          <button onClick={() => setApiError(null)} className="text-cream/70 hover:text-cream shrink-0 text-xs font-bold">✕</button>
+          <button aria-label="Close error message" onClick={() => setApiError(null)} className="text-cream/70 hover:text-cream shrink-0 text-xs font-bold">✕</button>
         </div>
       )}
 
@@ -310,7 +310,7 @@ If the user is NOT describing an activity and the image does not depict an activ
             <p className="text-cream/80 text-[10px] font-bold uppercase tracking-wider mt-1">{isTyping ? 'Thinking...' : 'Awake & Growing'}</p>
           </div>
         </div>
-        <button className="w-10 h-10 border-2 border-forest bg-leafMuted rounded-full flex items-center justify-center text-cream hover:bg-cream hover:text-forest smooth-transition shadow-brutal-sm">
+        <button aria-label="Agent options" className="w-10 h-10 border-2 border-forest bg-leafMuted rounded-full flex items-center justify-center text-cream hover:bg-cream hover:text-forest smooth-transition shadow-brutal-sm">
           <iconify-icon icon="ph:dots-three-bold" class="text-xl"></iconify-icon>
         </button>
       </div>
@@ -464,7 +464,7 @@ If the user is NOT describing an activity and the image does not depict an activ
       {screenShareModal && (
         <div className="fixed inset-0 bg-forest/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
           <div className="bg-cream rounded-[2rem] p-8 w-full max-w-sm relative border-4 border-forest shadow-brutal organic-card">
-            <button onClick={() => setScreenShareModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-white border-2 border-forest rounded-full flex items-center justify-center text-forest hover:bg-forest hover:text-cream smooth-transition">
+            <button aria-label="Close screen share modal" onClick={() => setScreenShareModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-white border-2 border-forest rounded-full flex items-center justify-center text-forest hover:bg-forest hover:text-cream smooth-transition">
               <X size={16} strokeWidth={3} />
             </button>
             <h3 className="text-forest mb-5 text-2xl font-serif font-bold">Share Screen</h3>
@@ -485,7 +485,7 @@ If the user is NOT describing an activity and the image does not depict an activ
       {scanModal && (
         <div className="fixed inset-0 bg-forest/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
           <div className="bg-cream rounded-[2rem] p-8 w-full max-w-sm relative border-4 border-forest shadow-brutal organic-card-alt">
-            <button onClick={() => setScanModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-white border-2 border-forest rounded-full flex items-center justify-center text-forest hover:bg-forest hover:text-cream smooth-transition">
+            <button aria-label="Close scan modal" onClick={() => setScanModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-white border-2 border-forest rounded-full flex items-center justify-center text-forest hover:bg-forest hover:text-cream smooth-transition">
               <X size={16} strokeWidth={3} />
             </button>
             <h3 className="text-forest mb-5 text-2xl font-serif font-bold">Scan Barcode</h3>
@@ -509,7 +509,7 @@ If the user is NOT describing an activity and the image does not depict an activ
       {receiptModal && (
         <div className="fixed inset-0 bg-forest/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
           <div className="bg-cream rounded-[2rem] p-8 w-full max-w-sm relative border-4 border-forest shadow-brutal organic-card">
-            <button onClick={() => setReceiptModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-white border-2 border-forest rounded-full flex items-center justify-center text-forest hover:bg-forest hover:text-cream smooth-transition">
+            <button aria-label="Close receipt modal" onClick={() => setReceiptModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-white border-2 border-forest rounded-full flex items-center justify-center text-forest hover:bg-forest hover:text-cream smooth-transition">
               <X size={16} strokeWidth={3} />
             </button>
             <h3 className="text-forest mb-5 text-2xl font-serif font-bold">Upload Receipt</h3>
