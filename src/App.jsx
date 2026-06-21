@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-const AIAgentPanel = lazy(() => import('./components/AIAgentPanel'));
-const ContentPanel = lazy(() => import('./components/ContentPanel'));
+import React, { useState, useEffect } from 'react';
+import AIAgentPanel from './components/AIAgentPanel';
+import ContentPanel from './components/ContentPanel';
 import AuthModal from './components/AuthModal';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -120,16 +120,12 @@ function App() {
           
           {/* Left/Main Column */}
           <div className="lg:col-span-7 flex flex-col gap-10">
-            <Suspense fallback={<div className="text-forest p-4 text-center">Loading content...</div>}>
-              <ContentPanel />
-            </Suspense>
+            <ContentPanel />
           </div>
 
           {/* Right Column: AI Agent */}
           <div className="lg:col-span-5 h-[850px] lg:mt-0 mt-12 animate-on-load animate-fade-in-up delay-400">
-            <Suspense fallback={<div className="text-forest p-4 text-center">Loading Sprout Agent...</div>}>
-              <AIAgentPanel />
-            </Suspense>
+            <AIAgentPanel />
           </div>
 
         </div>
