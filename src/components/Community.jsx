@@ -7,7 +7,6 @@ export default function Community() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Query top 50 users by leafPoints
     const q = query(
       collection(db, 'users'),
       orderBy('leafPoints', 'desc'),
@@ -15,9 +14,9 @@ export default function Community() {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const topUsers = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const topUsers = snapshot.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
       }));
       setLeaders(topUsers);
       setLoading(false);
@@ -49,7 +48,7 @@ export default function Community() {
         {loading ? (
           <div className="p-8 text-center font-bold text-forest animate-pulse">Loading Leaderboard...</div>
         ) : (
-          <div className="space-y-3">
+          <ol aria-label="Leaderboard — top planters by leaf points" className="space-y-3 list-none">
             {leaders.length > 0 ? leaders.map((user, index) => {
               const isCurrentUser = auth.currentUser && user.id === auth.currentUser.uid;
               
@@ -65,12 +64,16 @@ export default function Community() {
               }
 
               return (
-                <div key={user.id} className={`border-2 p-3 rounded-xl flex items-center justify-between transition-all ${rankStyle} ${isCurrentUser ? 'ring-4 ring-leaf ring-offset-2 ring-offset-cardBg' : ''}`}>
+                <li
+                  key={user.id}
+                  aria-label={`Rank ${index + 1}: ${user.displayName || 'EcoWarrior'} with ${user.leafPoints || 0} points`}
+                  className={`border-2 p-3 rounded-xl flex items-center justify-between transition-all ${rankStyle} ${isCurrentUser ? 'ring-4 ring-leaf ring-offset-2 ring-offset-cardBg' : ''}`}
+                >
                   <div className="flex items-center gap-4">
-                    <div className="w-8 font-black text-lg text-center opacity-70">
+                    <div className="w-8 font-black text-lg text-center opacity-70" aria-hidden="true">
                       #{index + 1}
                     </div>
-                    <div className="w-10 h-10 bg-white border-2 border-forest rounded-full flex items-center justify-center font-bold text-forest shrink-0">
+                    <div className="w-10 h-10 bg-white border-2 border-forest rounded-full flex items-center justify-center font-bold text-forest shrink-0" aria-hidden="true">
                       {user.displayName ? user.displayName.substring(0, 2).toUpperCase() : '🌿'}
                     </div>
                     <div>
@@ -88,14 +91,14 @@ export default function Community() {
                       <div className="text-[10px] font-bold uppercase tracking-widest opacity-80">Points</div>
                     </div>
                   </div>
-                </div>
+                </li>
               );
             }) : (
-              <div className="text-center py-6 text-soil font-medium">
+              <li className="text-center py-6 text-soil font-medium">
                 No users found. Be the first to earn points!
-              </div>
+              </li>
             )}
-          </div>
+          </ol>
         )}
       </div>
       

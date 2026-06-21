@@ -3,10 +3,10 @@ import AuthModal from './components/AuthModal';
 
 const AIAgentPanel = lazy(() => import('./components/AIAgentPanel'));
 const ContentPanel = lazy(() => import('./components/ContentPanel'));
-import { auth } from './firebase';
+import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { db } from './firebase';
 import { doc, setDoc, increment } from 'firebase/firestore';
+import { UserProvider } from './context/UserContext';
 import { playBloop } from './audio';
 import './index.css';
 
@@ -65,6 +65,14 @@ function App() {
 
   return (
     <>
+      {/* Skip to main content — keyboard / screen reader navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-forest focus:text-cream focus:font-bold focus:text-sm focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-brutal-sm focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {!user && <AuthModal onAuthSuccess={setUser} />}
       
       {/* Decorative Background Elements */}
@@ -122,16 +130,20 @@ function App() {
           
           {/* Left/Main Column */}
           <div className="lg:col-span-7 flex flex-col gap-10">
-            <Suspense fallback={<div className="h-64 flex items-center justify-center text-forest animate-pulse">Loading Content...</div>}>
-              <ContentPanel />
-            </Suspense>
+            <UserProvider>
+              <Suspense fallback={<div className="h-64 flex items-center justify-center text-forest animate-pulse">Loading Content...</div>}>
+                <ContentPanel />
+              </Suspense>
+            </UserProvider>
           </div>
 
           {/* Right Column: AI Agent */}
           <div className="lg:col-span-5 h-[850px] lg:mt-0 mt-12 animate-on-load animate-fade-in-up delay-400">
-            <Suspense fallback={<div className="h-full flex items-center justify-center text-forest animate-pulse border-4 border-forest rounded-[2rem] bg-cream">Waking up Sprout Agent...</div>}>
-              <AIAgentPanel />
-            </Suspense>
+            <UserProvider>
+              <Suspense fallback={<div className="h-full flex items-center justify-center text-forest animate-pulse border-4 border-forest rounded-[2rem] bg-cream">Waking up Sprout Agent...</div>}>
+                <AIAgentPanel />
+              </Suspense>
+            </UserProvider>
           </div>
 
         </main>

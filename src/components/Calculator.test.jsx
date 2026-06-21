@@ -5,8 +5,14 @@ import Calculator from './Calculator';
 
 // Mock Firebase
 vi.mock('../firebase', () => ({
-  db: {},
-  auth: { currentUser: { uid: 'test-user-123' } }
+  auth: { currentUser: { uid: 'user-1' } },
+  db: {}
+}));
+
+vi.mock('../context/UserContext', () => ({
+  useUser: () => ({
+    todayStats: { co2: 0, count: 0 }
+  })
 }));
 
 // Mock Firestore functions

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { db, auth } from '../firebase';
-import { collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc, limit } from 'firebase/firestore';
+import { collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc, setDoc, increment, limit } from 'firebase/firestore';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const EMISSION_FACTORS = {
   transport: {
@@ -254,13 +255,11 @@ export default function Calculator() {
         equivalent: generateEquivalentFact(calculatedCO2)
       });
       
-      // Award 10 points for manual logging
-      import('firebase/firestore').then(({ doc, setDoc, increment }) => {
-        setDoc(doc(db, 'users', auth.currentUser.uid), {
-          leafPoints: increment(10),
-          displayName: auth.currentUser.displayName || auth.currentUser.email?.split('@')[0] || 'EcoWarrior'
-        }, { merge: true }).catch(e => console.error("Failed to award points:", e));
-      });
+      // Award 10 points for manual logging (static imports, not dynamic)
+      setDoc(doc(db, 'users', auth.currentUser.uid), {
+        leafPoints: increment(10),
+        displayName: auth.currentUser.displayName || auth.currentUser.email?.split('@')[0] || 'EcoWarrior'
+      }, { merge: true }).catch(e => console.error('Failed to award points:', e));
       
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -287,6 +286,26 @@ export default function Calculator() {
     setNotes('');
     setSuccessData(null);
   };
+
+  // Build weekly chart data: last 7 days with CO2 totals
+  const weeklyChartData = useMemo(() => {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      days.push({ date: d, label: d.toLocaleDateString(undefined, { weekday: 'short' }), co2: 0 });
+    }
+    history.forEach(item => {
+      if (!item.timestamp) return;
+      const ts = typeof item.timestamp.toDate === 'function' ? item.timestamp.toDate() : new Date(item.timestamp);
+      const tsDay = new Date(ts);
+      tsDay.setHours(0, 0, 0, 0);
+      const bucket = days.find(d => d.date.getTime() === tsDay.getTime());
+      if (bucket) bucket.co2 = parseFloat((bucket.co2 + (item.amount || 0)).toFixed(2));
+    });
+    return days.map(({ label, co2 }) => ({ label, co2 }));
+  }, [history]);
 
   const weeklyProgress = Math.max(0, Math.min(100, (weeklyTotal / WEEKLY_GOAL) * 100));
 
@@ -489,8 +508,12 @@ export default function Calculator() {
               />
             </div>
             
-            {/* Live Preview */}
-            <div className={`text-center py-4 rounded-xl border-2 border-dashed ${estimatedCO2 !== 0 ? (estimatedCO2 < 0 ? 'bg-leaf/10 border-leaf' : 'bg-forest/5 border-forest') : 'bg-transparent border-forest/30'} smooth-transition`}>
+            {/* Live Preview — aria-live so screen readers announce estimate changes */}
+            <div
+              aria-live="polite"
+              aria-atomic="true"
+              className={`text-center py-4 rounded-xl border-2 border-dashed ${estimatedCO2 !== 0 ? (estimatedCO2 < 0 ? 'bg-leaf/10 border-leaf' : 'bg-forest/5 border-forest') : 'bg-transparent border-forest/30'} smooth-transition`}
+            >
               {estimatedCO2 !== 0 ? (
                 <div>
                   <div className={`font-bold text-xs uppercase tracking-widest mb-1 ${estimatedCO2 < 0 ? 'text-leaf' : 'text-soil'}`}>
@@ -510,6 +533,36 @@ export default function Calculator() {
               Log Activity
             </button>
           </form>
+        </div>
+      )}
+
+      {/* Weekly CO₂ Chart */}
+      {weeklyChartData.some(d => d.co2 !== 0) && (
+        <div className="mt-12">
+          <h3 className="font-serif text-2xl font-bold text-forest mb-6 flex items-center gap-2">
+            <iconify-icon icon="ph:chart-bar-bold"></iconify-icon> 7-Day CO₂ Trend
+          </h3>
+          <div className="bg-cream border-4 border-forest shadow-brutal p-6 rounded-[2rem]">
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={weeklyChartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                <XAxis dataKey="label" tick={{ fontFamily: 'inherit', fontWeight: 700, fontSize: 11, fill: '#3d5a3e' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 10, fill: '#7a6652' }} axisLine={false} tickLine={false} unit=" kg" />
+                <Tooltip
+                  contentStyle={{ borderRadius: '12px', border: '2px solid #3d5a3e', fontFamily: 'inherit', fontSize: 12, fontWeight: 700 }}
+                  formatter={(value) => [`${value} kg CO₂e`, 'Emissions']}
+                />
+                <Bar dataKey="co2" radius={[6, 6, 0, 0]} maxBarSize={48}>
+                  {weeklyChartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.co2 < 0 ? '#6a994e' : entry.co2 > WEEKLY_GOAL / 7 ? '#bc4749' : '#a7c957'}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-xs font-bold text-soil text-center mt-2 uppercase tracking-widest">Green = under daily target · Red = over daily target</p>
+          </div>
         </div>
       )}
 

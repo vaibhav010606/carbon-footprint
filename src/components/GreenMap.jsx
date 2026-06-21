@@ -273,7 +273,11 @@ export default function GreenMap() {
              </button>
           </div>
           
-          <div className="border-4 border-forest h-[450px] rounded-[2rem] overflow-hidden relative shadow-brutal-sm z-0 group">
+          <div
+            role="application"
+            aria-label="Interactive green spots map. Use zoom controls and click markers to view location details. A list of results is also available below."
+            className="border-4 border-forest h-[450px] rounded-[2rem] overflow-hidden relative shadow-brutal-sm z-0 group"
+          >
             {loading && (
               <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-[400] flex flex-col items-center justify-center">
                 <iconify-icon icon="ph:spinner-gap-bold" class="text-5xl text-forest animate-spin mb-4"></iconify-icon>
@@ -286,6 +290,7 @@ export default function GreenMap() {
               style={{ width: '100%', height: '100%' }}
               zoomControl={false}
             >
+
               <TileLayer
                 attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
                 url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"

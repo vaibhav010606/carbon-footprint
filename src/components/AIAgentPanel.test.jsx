@@ -8,8 +8,14 @@ beforeAll(() => {
 });
 
 vi.mock('../firebase', () => ({
-  auth: { currentUser: { uid: 'user-1' } },
+  auth: { currentUser: { uid: 'user-1', email: 'test@example.com', displayName: 'Tester' } },
   db: {}
+}));
+
+vi.mock('../context/UserContext', () => ({
+  useUser: () => ({
+    todayStats: { co2: 12.5, count: 3 }
+  })
 }));
 
 vi.mock('firebase/firestore', () => ({
@@ -92,10 +98,19 @@ describe('AIAgentPanel Component', () => {
     expect(screen.getByText(/Today So Far/i)).toBeInTheDocument();
   });
 
-  it('renders suggestion chips', () => {
+  it('handles sending a message asynchronously', async () => {
+    // Setup a mock API key
+    import.meta.env.VITE_GEMINI_API_KEYS = 'test-key';
+    
     render(<AIAgentPanel />);
-    // Should render at least some chips
-    const chipBtns = screen.getAllByRole('button');
-    expect(chipBtns.length).toBeGreaterThan(3);
+    const textarea = screen.getByLabelText(/Message Input/i);
+    const sendBtn = screen.getByRole('button', { name: /Send message/i });
+    
+    // Type and send
+    fireEvent.change(textarea, { target: { value: 'Test message' } });
+    fireEvent.click(sendBtn);
+    
+    // Check if the user message appears immediately
+    expect(screen.getByText('Test message')).toBeInTheDocument();
   });
 });

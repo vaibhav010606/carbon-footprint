@@ -1,41 +1,19 @@
-import { useState, useEffect } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db, auth } from '../firebase';
-
-const STAGES = [
-  { minPoints: 0, maxPoints: 200, title: "The Little Sprout", description: "Every great forest begins with a single seed. Keep logging eco-activities to help it grow!", icon: "ph:seedling-fill", color: "text-leaf" },
-  { minPoints: 201, maxPoints: 600, title: "The Young Sapling", description: "Your daily actions are taking root. Your tree is growing stronger every day!", icon: "ph:plant-fill", color: "text-leaf" },
-  { minPoints: 601, maxPoints: 1200, title: "The Flourishing Tree", description: "A healthy, strong tree! Your commitment to sustainability is making a real difference.", icon: "ph:tree-evergreen-fill", color: "text-forest" },
-  { minPoints: 1201, maxPoints: Infinity, title: "The Eternal Guardian", description: "A legendary, magical ancient tree. You are a true eco-hero!", icon: "ph:tree-fill", color: "text-terracotta" }
-];
+import { useUser } from '../context/UserContext';
+import { STAGES, getStageData } from '../utils/ecoGardenLogic';
 
 export default function EcoGarden() {
-  const [leafPoints, setLeafPoints] = useState(0);
+  const { leafPoints } = useUser();
 
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    const userDocRef = doc(db, 'users', auth.currentUser.uid);
-    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-      if (docSnap.exists() && typeof docSnap.data().leafPoints === 'number') {
-        setLeafPoints(docSnap.data().leafPoints);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Determine current stage
-  const currentStageIndex = STAGES.findIndex(s => leafPoints >= s.minPoints && leafPoints <= s.maxPoints);
-  const stage = STAGES[currentStageIndex !== -1 ? currentStageIndex : 3];
+  const { stageIndex, stage, nextStage } = getStageData(leafPoints);
 
   // Calculate progress to next stage
-  const nextStage = STAGES[currentStageIndex + 1];
   let progressPercentage = 100;
   let pointsNeeded = 0;
-  
+
   if (nextStage) {
     const pointsInCurrentTier = leafPoints - stage.minPoints;
     const totalPointsInTier = nextStage.minPoints - stage.minPoints;
-    progressPercentage = (pointsInCurrentTier / totalPointsInTier) * 100;
+    progressPercentage = Math.max(0, Math.min(100, (pointsInCurrentTier / totalPointsInTier) * 100));
     pointsNeeded = nextStage.minPoints - leafPoints;
   }
 
@@ -72,7 +50,7 @@ export default function EcoGarden() {
 
         {/* Status Area */}
         <div className="relative z-10 w-full bg-cardBg border-t-4 border-forest p-8 flex flex-col items-center">
-          <span className="text-xs font-black uppercase tracking-widest text-leaf mb-2">Stage {currentStageIndex !== -1 ? currentStageIndex + 1 : 4} of {STAGES.length}</span>
+          <span className="text-xs font-black uppercase tracking-widest text-leaf mb-2">Stage {stageIndex + 1} of {STAGES.length}</span>
           <h3 className="font-serif text-3xl font-black text-forest mb-4">{stage.title}</h3>
           <p className="text-soil font-medium max-w-md mb-8">{stage.description}</p>
 

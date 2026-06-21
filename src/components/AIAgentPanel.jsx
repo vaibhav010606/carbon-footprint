@@ -4,9 +4,12 @@ import ReactMarkdown from 'react-markdown';
 import ChatBubble from './ChatBubble';
 import { playSuccess } from '../audio';
 import { db, auth } from '../firebase';
-import { collection, addDoc, serverTimestamp, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, orderBy, onSnapshot, doc, setDoc, increment, limit } from 'firebase/firestore';
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { createSproutGraph } from "../agent/graph";
+import { useUser } from '../context/UserContext';
+
+
 
 const ALL_CHIPS = ['Took the train', 'Bought a coffee', 'Ate a salad', 'Used AC all day', 'Bicycled 5km', 'Ate a burger', 'Flew to Delhi', 'Drove 20km', 'Turned off lights'];
 
@@ -37,10 +40,11 @@ export default function AIAgentPanel() {
   const [screenShareModal, setScreenShareModal] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [apiError, setApiError] = useState(null); // visible error for debugging
-  const [todayStats, setTodayStats] = useState({ co2: 0, count: 0 });
+  const { todayStats } = useUser();
 
   const sproutGraphRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const lastMessageTimeRef = useRef(0);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,37 +54,7 @@ export default function AIAgentPanel() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Listen to today's activities for the stats card
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    const q = query(
-      collection(db, 'activities'),
-      where('userId', '==', auth.currentUser.uid),
-      orderBy('timestamp', 'desc')
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      
-      let count = 0;
-      let co2 = 0;
-      
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        // Exclude game points from CO2 totals
-        if (data.source === 'eco_sorter_game') return;
-        
-        const timestamp = data.timestamp?.toDate();
-        if (timestamp && timestamp >= today) {
-          count++;
-          co2 += (data.amount || 0);
-        }
-      });
-      
-      setTodayStats({ co2, count });
-    });
-    return () => unsubscribe();
-  }, []);
+  // Today stats are now provided by UserContext — no separate Firestore listener needed here.
 
   const addAgentMessage = (text) => {
     setMessages(prev => [...prev, { id: nextId(), type: 'agent', text }]);
@@ -89,6 +63,14 @@ export default function AIAgentPanel() {
   const sendMessage = async (text, base64Image = null, mimeType = 'image/jpeg') => {
     const trimmed = text.trim();
     if ((!trimmed && !base64Image) || isTyping) return;
+
+    // Rate limit: 2 seconds between messages
+    const now = Date.now();
+    if (now - lastMessageTimeRef.current < 2000) {
+      setApiError("Please wait a moment before sending another message.");
+      return;
+    }
+    lastMessageTimeRef.current = now;
 
     // Immediately show user message and clear input
     setMessages(prev => [...prev, { id: nextId(), type: 'user', text: trimmed, image: base64Image }]);
@@ -164,11 +146,9 @@ If the user is NOT describing an activity and the image does not depict an activ
   "reply": "Your helpful conversational reply here."
 }`;
 
-      // Memoize the graph instance
-      if (!sproutGraphRef.current) {
-        sproutGraphRef.current = createSproutGraph(apiKey, systemPrompt);
-      }
-      const sproutGraph = sproutGraphRef.current;
+      // Always create a fresh graph instance with the current API key so
+      // round-robin key rotation is not silently broken by a stale ref.
+      const sproutGraph = createSproutGraph(apiKey, systemPrompt);
 
       // Invoke the LangGraph workflow
       const graphResult = await sproutGraph.invoke({ messages: langChainMessages });
@@ -211,14 +191,11 @@ If the user is NOT describing an activity and the image does not depict an activ
           console.error("Failed to save activity to Firebase:", e);
         });
 
-        // Award 50 leaf points for logging an activity
-        import('firebase/firestore').then(({ doc, setDoc, increment }) => {
-          setDoc(doc(db, 'users', auth.currentUser.uid), {
-            leafPoints: increment(50),
-            // Ensure displayName exists for leaderboards
-            displayName: auth.currentUser.displayName || auth.currentUser.email?.split('@')[0] || 'EcoWarrior'
-          }, { merge: true }).catch(e => console.error("Failed to award points:", e));
-        });
+        // Award 50 leaf points for logging an activity (static imports, not dynamic)
+        setDoc(doc(db, 'users', auth.currentUser.uid), {
+          leafPoints: increment(50),
+          displayName: auth.currentUser.displayName || auth.currentUser.email?.split('@')[0] || 'EcoWarrior'
+        }, { merge: true }).catch(e => console.error('Failed to award points:', e));
       }
 
       addAgentMessage(parsed.reply || "Got it! I've noted that for you.");
@@ -317,24 +294,24 @@ If the user is NOT describing an activity and the image does not depict an activ
       </div>
 
       {/* Chat Thread */}
-      <div className="flex-1 p-6 overflow-y-auto space-y-6 relative z-10 no-scrollbar">
+      <div className="flex-1 p-6 overflow-y-auto space-y-6 relative z-10 no-scrollbar" aria-live="polite">
         {messages.length < 3 && (
           <div className="bg-white dark:bg-[#1E221B] border-2 border-forest dark:border-white/10 rounded-2xl p-4 mb-6 shadow-brutal-sm mx-auto max-w-[85%] rotate-1 hover:rotate-0 smooth-transition">
             <h4 className="text-forest dark:text-leaf text-[10px] font-black uppercase tracking-widest mb-3 text-center">Today So Far</h4>
             <div className="flex justify-between items-center px-4">
               <div className="text-center">
                 <span className="block text-2xl font-black text-leaf">{todayStats.co2.toFixed(1)}</span>
-                <span className="text-[8px] text-soil uppercase font-bold tracking-wider">kg CO₂e</span>
+                <span className="text-[10px] text-soil uppercase font-bold tracking-wider">kg CO₂e</span>
               </div>
               <div className="w-0.5 h-6 bg-forest/20"></div>
               <div className="text-center">
                 <span className="block text-2xl font-black text-leaf">{todayStats.count}</span>
-                <span className="text-[8px] text-soil uppercase font-bold tracking-wider">Activities</span>
+                <span className="text-[10px] text-soil uppercase font-bold tracking-wider">Activities</span>
               </div>
               <div className="w-0.5 h-6 bg-forest/20"></div>
               <div className="text-center text-terracotta">
                 <iconify-icon icon="ph:trend-down-bold" class="text-xl"></iconify-icon>
-                <span className="block text-[8px] uppercase font-bold tracking-wider">LIVE</span>
+                <span className="block text-[10px] uppercase font-bold tracking-wider">LIVE</span>
               </div>
             </div>
           </div>

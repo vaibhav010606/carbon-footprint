@@ -16,8 +16,6 @@
     "@langchain/core": "^1.2.0",
     "@langchain/google-genai": "^2.2.0",
     "@langchain/langgraph": "^1.4.4",
-    "@react-google-maps/api": "^2.20.8",
-    "date-fns": "^4.4.0",
     "firebase": "^12.15.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.21.0",

@@ -106,6 +106,7 @@ export default function LearningHub() {
             href={item.url === '#' ? '#article' : item.url}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`${item.title} — ${item.duration} (opens in new tab)`}
             onClick={playBloop}
             className="bg-white border-4 border-forest rounded-[2rem] overflow-hidden shadow-brutal flex flex-col group hover:-translate-y-2 hover:shadow-brutal-hover smooth-transition cursor-pointer relative no-underline block"
           >

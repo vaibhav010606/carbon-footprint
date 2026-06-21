@@ -1,68 +1,14 @@
-import { useState, useEffect } from 'react';
-import { doc, onSnapshot, collection, query, where } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { useUser } from '../context/UserContext';
 
 export default function Challenges() {
-  const [userStats, setUserStats] = useState({
-    points: 0,
-    level: 1
-  });
-  const [badges, setBadges] = useState([]);
-  const [meatlessDays, setMeatlessDays] = useState(0);
+  // Pull all derived data from the shared UserContext — no separate Firestore listeners needed.
+  const { leafPoints, badges, meatlessDays } = useUser();
 
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    
-    // User stats (Points/Level)
-    const userDocRef = doc(db, 'users', auth.currentUser.uid);
-    const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const points = docSnap.data().leafPoints || 0;
-        setUserStats(prev => ({
-          ...prev,
-          points: points,
-          level: Math.floor(points / 1000) + 1
-        }));
-      }
-    });
-
-    // Activities for badges and challenges
-    const q = query(collection(db, 'activities'), where('userId', '==', auth.currentUser.uid));
-    const unsubscribeActivities = onSnapshot(q, (snapshot) => {
-      const acts = snapshot.docs.map(doc => doc.data());
-      
-      // Calculate Badges
-      let newBadges = [];
-      if (acts.length > 0) newBadges.push("First Step");
-      if (acts.length >= 10) newBadges.push("Eco Warrior");
-      if (acts.some(a => a.subCategory === 'recycle' || a.activityType === 'waste')) newBadges.push("Recycler");
-      if (acts.some(a => a.activityType === 'positive')) newBadges.push("Planet Saver");
-      if (newBadges.length === 0) newBadges.push("Getting Started");
-      setBadges(newBadges);
-
-      // Calculate Meatless Week Progress (very simple approximation: unique days with vegetarian/vegan meals)
-      const meatlessDates = new Set();
-      acts.forEach(a => {
-        if (a.activityType === 'food' && (a.subCategory === 'vegetarian' || a.subCategory === 'vegan')) {
-          if (a.timestamp) {
-            const d = typeof a.timestamp.toDate === 'function' ? a.timestamp.toDate() : new Date(a.timestamp);
-            meatlessDates.add(d.toDateString());
-          }
-        }
-      });
-      setMeatlessDays(Math.min(meatlessDates.size, 7));
-
-    });
-
-    return () => {
-      unsubscribeUser();
-      unsubscribeActivities();
-    };
-  }, []);
+  const level = Math.floor(leafPoints / 1000) + 1;
 
   return (
     <div className="animate-fade-in-up">
-      <h2 className="font-serif text-4xl font-bold text-forest mb-2">Game & Challenges</h2>
+      <h2 className="font-serif text-4xl font-bold text-forest mb-2">Game &amp; Challenges</h2>
       <p className="text-soil font-medium mb-8">Your live progress based on actual activities logged.</p>
       
       <div className="flex flex-col md:flex-row gap-6 mb-8">
@@ -72,7 +18,7 @@ export default function Challenges() {
           </div>
           <div>
             <p className="text-forest font-bold text-xs uppercase tracking-widest">Total Points</p>
-            <h3 className="font-serif text-4xl font-black text-forest">{userStats.points}</h3>
+            <h3 className="font-serif text-4xl font-black text-forest">{leafPoints}</h3>
           </div>
         </div>
         
@@ -82,7 +28,7 @@ export default function Challenges() {
           </div>
           <div>
             <p className="text-forest font-bold text-xs uppercase tracking-widest">Current Level</p>
-            <h3 className="font-serif text-4xl font-black text-forest">Lvl {userStats.level}</h3>
+            <h3 className="font-serif text-4xl font-black text-forest">Lvl {level}</h3>
           </div>
         </div>
       </div>

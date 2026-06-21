@@ -38,15 +38,24 @@ export default function AuthModal({ onAuthSuccess }) {
       if (onAuthSuccess) onAuthSuccess(result.user);
     } catch (err) {
       console.error(err);
-      if (err.code === 'auth/invalid-credential') {
-        setError('Invalid email or password. If you don\\'t have an account, please click Sign Up below.');
-      } else {
-        setError(err.message);
-      }
+      const errorMessages = {
+        'auth/invalid-credential':    "Invalid email or password. If you don't have an account, click Sign Up.",
+        'auth/user-not-found':        "No account found with this email. Please sign up first.",
+        'auth/wrong-password':        "Incorrect password. Please try again.",
+        'auth/email-already-in-use':  "This email is already registered. Try logging in instead.",
+        'auth/weak-password':         "Password must be at least 6 characters.",
+        'auth/invalid-email':         "Please enter a valid email address.",
+        'auth/too-many-requests':     "Too many failed attempts. Please try again later.",
+        'auth/network-request-failed':"Network error. Please check your internet connection.",
+        'auth/popup-closed-by-user':  "Sign-in popup was closed. Please try again.",
+        'auth/cancelled-popup-request': "Another sign-in attempt is in progress.",
+      };
+      setError(errorMessages[err.code] || "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest/80 backdrop-blur-sm animate-fade-in">

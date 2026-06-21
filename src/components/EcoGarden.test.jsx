@@ -8,6 +8,12 @@ vi.mock('../firebase', () => ({
   db: {}
 }));
 
+vi.mock('../context/UserContext', () => ({
+  useUser: () => ({
+    leafPoints: 150,
+  })
+}));
+
 vi.mock('firebase/firestore', () => ({
   doc: vi.fn(),
   onSnapshot: vi.fn((docRef, callback) => {

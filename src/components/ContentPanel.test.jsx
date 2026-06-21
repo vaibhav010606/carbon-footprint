@@ -8,10 +8,19 @@ vi.mock('../firebase', () => ({
   db: {}
 }));
 
+vi.mock('../context/UserContext', () => ({
+  useUser: () => ({
+    leafPoints: 0,
+    streak: 0,
+  }),
+  UserProvider: ({ children }) => <>{children}</>
+}));
+
 vi.mock('firebase/firestore', () => ({
   collection: vi.fn(),
   query: vi.fn(),
   where: vi.fn(),
+  limit: vi.fn(),
   onSnapshot: vi.fn((q, callback) => {
     // Return a mock docSnap with exists() and data() methods
     callback({
@@ -28,7 +37,7 @@ vi.mock('firebase/firestore', () => ({
 // Mock all child tab components
 vi.mock('./Calculator', () => ({ default: () => <div data-testid="calculator">Calculator</div> }));
 vi.mock('./GreenMap', () => ({ default: () => <div data-testid="green-map">GreenMap</div> }));
-vi.mock('./Analytics', () => ({ default: () => <div data-testid="analytics">Analytics</div> }));
+// Removed orphaned Analytics mock
 vi.mock('./Community', () => ({ default: () => <div data-testid="community">Community</div> }));
 vi.mock('./EcoGarden', () => ({ default: () => <div data-testid="eco-garden">EcoGarden</div> }));
 vi.mock('./Challenges', () => ({ default: () => <div data-testid="challenges">Challenges</div> }));

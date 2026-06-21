@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { db, auth } from '../firebase';
-import { collection, query, where, onSnapshot, doc } from 'firebase/firestore';
+import React, { useState } from 'react';
 import Calculator from './Calculator';
 import GreenMap from './GreenMap';
 import Challenges from './Challenges';
@@ -8,10 +6,11 @@ import LearningHub from './LearningHub';
 import EcoGarden from './EcoGarden';
 import Recommendations from './Recommendations';
 import Game from './Game';
-
 import Community from './Community';
 import { ArrowLeft } from 'lucide-react';
 import { playBloop } from '../audio';
+import { getStageData } from '../utils/ecoGardenLogic';
+import { useUser } from '../context/UserContext';
 
 function renderTab(id) {
   switch (id) {
@@ -30,85 +29,19 @@ function renderTab(id) {
 
 export default function ContentPanel() {
   const [activeTab, setActiveTab] = useState(null);
-  const [leafPoints, setLeafPoints] = useState(0);
-  const [streak, setStreak] = useState(0);
 
-  const getStageData = (points) => {
-    if (points <= 200) return { level: 1, name: 'The Little Sprout', icon: 'ph:plant-bold', nextThreshold: 201, nextName: 'The Young Sapling' };
-    if (points <= 600) return { level: 2, name: 'The Young Sapling', icon: 'ph:plant-fill', nextThreshold: 601, nextName: 'The Flourishing Tree' };
-    if (points <= 1200) return { level: 3, name: 'The Flourishing Tree', icon: 'ph:potted-plant-duotone', nextThreshold: 1201, nextName: 'The Eternal Guardian' };
-    return { level: 4, name: 'The Eternal Guardian', icon: 'ph:tree-fill', nextThreshold: null, nextName: 'Max Level' };
-  };
+  // Pull shared data from UserContext — no separate Firestore listeners needed here.
+  const { leafPoints, streak } = useUser();
 
-  const stage = getStageData(leafPoints);
+  const { stage, nextStage } = getStageData(leafPoints);
   let progressPercent = 100;
   let remaining = 0;
-  if (stage.nextThreshold) {
-    const minPoints = stage.level === 1 ? 0 : stage.level === 2 ? 201 : 601;
-    const pointsInCurrentTier = leafPoints - minPoints;
-    const totalPointsInTier = stage.nextThreshold - minPoints;
-    progressPercent = (pointsInCurrentTier / totalPointsInTier) * 100;
-    remaining = stage.nextThreshold - leafPoints;
+  if (nextStage) {
+    const pointsInCurrentTier = leafPoints - stage.minPoints;
+    const totalPointsInTier = nextStage.minPoints - stage.minPoints;
+    progressPercent = Math.max(0, Math.min(100, (pointsInCurrentTier / totalPointsInTier) * 100));
+    remaining = nextStage.minPoints - leafPoints;
   }
-
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    
-    // Listen to activities for streak
-    const q = query(collection(db, 'activities'), where('userId', '==', auth.currentUser.uid));
-    const unsubscribeActivities = onSnapshot(q, (snapshot) => {
-      let daysArray = [];
-      snapshot.docs.forEach(docSnap => {
-        const data = docSnap.data();
-        if (data.timestamp) {
-          const d = typeof data.timestamp.toDate === 'function' ? data.timestamp.toDate() : new Date(data.timestamp);
-          if (d) {
-            const dString = d.toDateString();
-            if (!daysArray.includes(dString)) daysArray.push(dString);
-          }
-        }
-      });
-      
-      daysArray.sort((a, b) => new Date(b) - new Date(a));
-      let currentStreak = 0;
-      let checkDate = new Date();
-      checkDate.setHours(0, 0, 0, 0);
-      
-      if (daysArray.length > 0) {
-        const firstDate = new Date(daysArray[0]);
-        firstDate.setHours(0, 0, 0, 0);
-        const diffDays = Math.floor((checkDate - firstDate) / (1000 * 60 * 60 * 24));
-        if (diffDays === 0 || diffDays === 1) {
-          let expectedDate = new Date(firstDate);
-          for (let dateStr of daysArray) {
-            const d = new Date(dateStr);
-            d.setHours(0,0,0,0);
-            if (d.getTime() === expectedDate.getTime()) {
-              currentStreak++;
-              expectedDate.setDate(expectedDate.getDate() - 1);
-            } else {
-              break;
-            }
-          }
-        }
-      }
-
-      setStreak(currentStreak);
-    });
-
-    // Listen to user document for leafPoints
-    const userDocRef = doc(db, 'users', auth.currentUser.uid);
-    const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
-      if (docSnap.exists() && typeof docSnap.data().leafPoints === 'number') {
-        setLeafPoints(docSnap.data().leafPoints);
-      }
-    });
-
-    return () => {
-      unsubscribeActivities();
-      unsubscribeUser();
-    };
-  }, []);
 
   const handleTabClick = (tabId) => {
     playBloop();
@@ -143,13 +76,13 @@ export default function ContentPanel() {
           </div>
           <div className="flex items-end gap-3 mb-4">
             <div className="w-16 h-16 bg-cream border-2 border-forest rounded-full flex items-center justify-center shrink-0 hover:rotate-[360deg] transition-transform duration-700 ease-in-out" aria-hidden="true">
-              <iconify-icon icon={stage.icon} class="text-4xl text-leaf"></iconify-icon>
+              <iconify-icon icon={stage.iconSimple} class="text-4xl text-leaf"></iconify-icon>
             </div>
             <h2 className="font-serif text-3xl font-bold leading-none text-forest">
-              {stage.name.split(' ').map((word, i) => (
+              {stage.title.split(' ').map((word, i) => (
                 <React.Fragment key={i}>
                   {word}
-                  {i < stage.name.split(' ').length - 1 && <br />}
+                  {i < stage.title.split(' ').length - 1 && <br />}
                 </React.Fragment>
               ))}
             </h2>
@@ -171,7 +104,7 @@ export default function ContentPanel() {
             ></div>
           </div>
           <div className="text-right text-[10px] font-bold mt-1 uppercase text-soil">
-            {stage.nextThreshold ? `${remaining} PTS TO ${stage.nextName.toUpperCase()}` : 'MAX LEVEL ACHIEVED'}
+            {nextStage ? `${remaining} PTS TO ${nextStage.title.toUpperCase()}` : 'MAX LEVEL ACHIEVED'}
           </div>
         </div>
 
@@ -209,7 +142,7 @@ export default function ContentPanel() {
         </button>
 
         {/* Secondary Card */}
-        <button onClick={() => handleTabClick('greenMap')} className="animate-on-load animate-fade-in-up delay-400 col-span-1 md:col-span-1 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 shadow-brutal dark:shadow-none p-6 rounded-[2rem] text-left group hover:bg-leafMuted hover:text-cream hover:scale-[1.02] hover:-translate-y-2 hover:shadow-brutal-hover active:scale-95 smooth-transition flex flex-col justify-between overflow-hidden relative">
+        <button aria-label="Open Green Map" onClick={() => handleTabClick('greenMap')} className="animate-on-load animate-fade-in-up delay-400 col-span-1 md:col-span-1 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 shadow-brutal dark:shadow-none p-6 rounded-[2rem] text-left group hover:bg-leafMuted hover:text-cream hover:scale-[1.02] hover:-translate-y-2 hover:shadow-brutal-hover active:scale-95 smooth-transition flex flex-col justify-between overflow-hidden relative">
           <div className="w-12 h-12 bg-forest dark:bg-white/5 text-cream dark:text-forest rounded-full flex items-center justify-center mb-4 group-hover:bg-cream group-hover:text-forest smooth-transition">
             <iconify-icon icon="ph:map-pin-line" class="text-2xl"></iconify-icon>
           </div>
@@ -225,7 +158,7 @@ export default function ContentPanel() {
 
         {/* Small Grid Items */}
         <div className="col-span-2 md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          <button onClick={() => handleTabClick('game')} className="col-span-2 md:col-span-2 animate-on-load animate-fade-in-up delay-500 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition">
+          <button aria-label="Open Carbon Footprint Awareness Game" onClick={() => handleTabClick('game')} className="col-span-2 md:col-span-2 animate-on-load animate-fade-in-up delay-500 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition">
             <div className="w-20 h-20 bg-leafMuted dark:bg-[#2F6F50]/20 border-2 border-forest dark:border-transparent rounded-full flex shrink-0 items-center justify-center group-hover:rotate-45 smooth-transition">
               <iconify-icon icon="ph:footprints-fill" class="text-cream dark:text-[#2F6F50] text-5xl"></iconify-icon>
             </div>
@@ -235,7 +168,7 @@ export default function ContentPanel() {
             </div>
           </button>
 
-          <button onClick={() => handleTabClick('community')} className="animate-on-load animate-fade-in-up delay-600 bg-ochre dark:bg-[#40301a] border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition relative overflow-hidden">
+          <button aria-label="Open Community Leaderboard" onClick={() => handleTabClick('community')} className="animate-on-load animate-fade-in-up delay-600 bg-ochre dark:bg-[#40301a] border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
             <div className="w-14 h-14 bg-cream dark:bg-ochre/20 border-2 border-forest dark:border-transparent rounded-full flex shrink-0 items-center justify-center group-hover:scale-110 smooth-transition">
               <iconify-icon icon="ph:users-three-fill" class="text-terracotta dark:text-ochre text-3xl group-hover:animate-bounce-spring"></iconify-icon>
@@ -248,7 +181,7 @@ export default function ContentPanel() {
 
 
 
-          <button onClick={() => handleTabClick('rewards')} className="animate-on-load animate-fade-in-up delay-700 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-leaf hover:text-cream hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition">
+          <button aria-label="Open Eco Garden" onClick={() => handleTabClick('rewards')} className="animate-on-load animate-fade-in-up delay-700 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-leaf hover:text-cream hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition">
             <div className="w-14 h-14 bg-leaf border-2 border-forest dark:border-transparent rounded-full flex shrink-0 items-center justify-center group-hover:bg-cream group-hover:text-leaf smooth-transition">
               <iconify-icon icon="ph:tree-evergreen-fill" class="text-cream text-3xl"></iconify-icon>
             </div>
@@ -260,7 +193,7 @@ export default function ContentPanel() {
         </div>
 
         {/* Full Width Card */}
-        <button onClick={() => handleTabClick('learningHub')} className="animate-on-load animate-fade-in-up delay-800 col-span-2 md:col-span-3 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 shadow-brutal-sm dark:shadow-none p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center gap-6 group hover:border-terracotta hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.01] active:scale-95 smooth-transition text-left">
+        <button aria-label="Open The Field Guide" onClick={() => handleTabClick('learningHub')} className="animate-on-load animate-fade-in-up delay-800 col-span-2 md:col-span-3 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 shadow-brutal-sm dark:shadow-none p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center gap-6 group hover:border-terracotta hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.01] active:scale-95 smooth-transition text-left">
           <div className="w-16 h-16 bg-leafMuted dark:bg-white/5 text-cream dark:text-forest border-2 border-forest dark:border-transparent rounded-[1rem] flex items-center justify-center shrink-0 -rotate-3 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-terracotta smooth-transition">
             <iconify-icon icon="ph:book-open-text-duotone" class="text-3xl"></iconify-icon>
           </div>

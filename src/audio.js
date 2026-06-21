@@ -49,5 +49,6 @@ export const playSuccess = () => {
     
     osc.start();
     osc.stop(ctx.currentTime + 0.4);
-  } catch(e) {}
+  } catch {
+  }
 };
