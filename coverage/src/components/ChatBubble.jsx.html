@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/components/Game.jsx</title>
+    <title>Code coverage report for src/components/ChatBubble.jsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/components</a> Game.jsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/components</a> ChatBubble.jsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -32,7 +32,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -81,8 +81,25 @@
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
 <a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -99,20 +116,45 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export default function Game() {
-  return (
-    &lt;div className="animate-fade-in-up"&gt;
-      &lt;h2 className="font-serif text-4xl font-bold text-forest mb-2"&gt;Eco Quest: Save the Planet&lt;/h2&gt;
-      &lt;p className="text-soil font-medium mb-8"&gt;Play as the Eco-Hero to restore nature!&lt;/p&gt;
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
+import ReactMarkdown from 'react-markdown';
 &nbsp;
-      &lt;div className="bg-cream border-4 border-forest shadow-brutal rounded-[2rem] text-center relative overflow-hidden" style={{ height: '75vh', minHeight: '600px' }}&gt;
-        &lt;iframe 
-          src="/eco-quest.html?v=2" 
-          title="Eco Quest Game" 
-          className="absolute inset-0 w-full h-full border-0"
-          style={{ width: '100%', height: '100%', border: 'none' }}
-          allowFullScreen
-        &gt;&lt;/iframe&gt;
+export default function ChatBubble({ msg }) {
+  return (
+    &lt;div className={`flex gap-3 max-w-[85%] animate-fade-in-up ${msg.type === 'user' ? 'ml-auto flex-row-reverse' : ''}`}&gt;
+      {msg.type === 'user' ? (
+        &lt;div className="w-8 h-8 rounded-full bg-mud flex items-center justify-center shrink-0 border-2 border-forest shadow-sm mt-auto"&gt;
+          &lt;iconify-icon icon="ph:user-fill" class="text-cream text-sm"&gt;&lt;/iconify-icon&gt;
+        &lt;/div&gt;
+      ) : (
+        &lt;div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center shrink-0 border-2 border-forest shadow-sm mt-auto"&gt;
+          &lt;iconify-icon icon="ph:plant-fill" class="text-leaf text-sm"&gt;&lt;/iconify-icon&gt;
+        &lt;/div&gt;
+      )}
+      &lt;div className={`${msg.type === 'user' ? 'bg-forest text-cream border-2 border-forest dark:bg-[#2F6F50] dark:text-[#EDE8DA] dark:border-transparent rounded-[1.5rem_1.5rem_0_1.5rem]' : 'bg-white border-2 border-forest text-forest dark:bg-[#23261F] dark:text-[#EDE8DA] dark:border-white/10 rounded-[1.5rem_1.5rem_1.5rem_0]'} p-4 shadow-brutal-sm dark:shadow-none`}&gt;
+        &lt;div className="font-medium text-sm leading-relaxed whitespace-pre-line [&amp;&gt;p]:mb-2 last:[&amp;&gt;p]:mb-0 [&amp;&gt;strong]:font-black [&amp;&gt;ul]:list-disc [&amp;&gt;ul]:ml-4"&gt;
+          {msg.type === 'agent' ? (
+            &lt;ReactMarkdown&gt;{msg.text}&lt;/ReactMarkdown&gt;
+          ) : (
+            &lt;&gt;
+              {msg.text}
+              {msg.image &amp;&amp; (
+                &lt;img src={msg.image} alt={msg.altText || "User uploaded attachment"} className="w-full max-w-[240px] max-h-[200px] object-cover object-left-top mt-3 rounded-xl border-2 border-forest shadow-sm" /&gt;
+              )}
+            &lt;/&gt;
+          )}
+        &lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   );

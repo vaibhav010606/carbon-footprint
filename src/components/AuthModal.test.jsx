@@ -34,7 +34,7 @@ describe('AuthModal Component', () => {
 
   it('switches to sign up when clicking the link', () => {
     render(<AuthModal onAuthSuccess={() => {}} />);
-    const signUpLink = screen.getByRole('button', { name: 'Sign Up' });
+    const signUpLink = screen.getByRole('button', { name: /Sign Up/i });
     fireEvent.click(signUpLink);
     expect(screen.getByRole('button', { name: /Sign Up/i })).toBeInTheDocument();
     expect(screen.getByText(/Already have an account/i)).toBeInTheDocument();

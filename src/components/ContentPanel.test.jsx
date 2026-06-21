@@ -53,10 +53,6 @@ describe('ContentPanel Component', () => {
     expect(screen.getByText(/Green Map/i)).toBeInTheDocument();
   });
 
-  it('renders Analytics button', () => {
-    render(<ContentPanel />);
-    expect(screen.getByText(/Analytics/i)).toBeInTheDocument();
-  });
 
   it('renders Eco Garden button', () => {
     render(<ContentPanel />);

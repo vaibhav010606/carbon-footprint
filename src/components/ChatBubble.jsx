@@ -21,7 +21,7 @@ export default function ChatBubble({ msg }) {
             <>
               {msg.text}
               {msg.image && (
-                <img src={msg.image} alt="Attachment" className="w-full max-w-[240px] max-h-[200px] object-cover object-left-top mt-3 rounded-xl border-2 border-forest shadow-sm" />
+                <img src={msg.image} alt={msg.altText || "User uploaded attachment"} className="w-full max-w-[240px] max-h-[200px] object-cover object-left-top mt-3 rounded-xl border-2 border-forest shadow-sm" />
               )}
             </>
           )}
