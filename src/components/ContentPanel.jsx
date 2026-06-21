@@ -8,7 +8,7 @@ import LearningHub from './LearningHub';
 import EcoGarden from './EcoGarden';
 import Recommendations from './Recommendations';
 import Game from './Game';
-import Analytics from './Analytics';
+
 import Community from './Community';
 import { ArrowLeft } from 'lucide-react';
 import { playBloop } from '../audio';
@@ -22,7 +22,7 @@ function renderTab(id) {
     case 'game':           return <Game />;
     case 'rewards':        return <EcoGarden />;
     case 'recommendations':return <Recommendations />;
-    case 'analytics':      return <Analytics />;
+
     case 'community':      return <Community />;
     default: return null;
   }
@@ -246,15 +246,7 @@ export default function ContentPanel() {
             </div>
           </button>
 
-          <button onClick={() => handleTabClick('analytics')} className="animate-on-load animate-fade-in-up delay-700 bg-leafMuted dark:bg-[#1a3022] border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-forest hover:text-cream hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition">
-            <div className="w-14 h-14 bg-cream dark:bg-leaf/20 border-2 border-forest dark:border-transparent rounded-full flex shrink-0 items-center justify-center group-hover:bg-terracotta group-hover:text-cream smooth-transition text-forest dark:text-leaf">
-              <iconify-icon icon="ph:chart-bar-fill" class="text-3xl"></iconify-icon>
-            </div>
-            <div className="text-left">
-              <h4 className="font-serif font-bold text-lg leading-tight text-forest dark:text-leaf group-hover:text-cream smooth-transition">Analytics</h4>
-              <p className="text-xs font-medium text-soil dark:text-leaf/80 group-hover:text-cream/80">Track your impact</p>
-            </div>
-          </button>
+
 
           <button onClick={() => handleTabClick('rewards')} className="animate-on-load animate-fade-in-up delay-700 bg-cardBg dark:bg-cardBg border-4 border-forest dark:border dark:border-white/10 p-5 rounded-[1.5rem] flex items-center gap-4 group hover:bg-leaf hover:text-cream hover:shadow-brutal-sm-hover hover:-translate-y-1 hover:scale-[1.02] active:scale-95 smooth-transition">
             <div className="w-14 h-14 bg-leaf border-2 border-forest dark:border-transparent rounded-full flex shrink-0 items-center justify-center group-hover:bg-cream group-hover:text-leaf smooth-transition">
